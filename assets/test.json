@@ -1,0 +1,18 @@
+{
+    "asset-id": "foo",
+    "name": "Foo",
+
+    "isAnimated": true, // if set to false, ignore the next fields
+
+    "spritesheet": "spritesheet Prototype.png",
+    "frame-width": 32,
+    "frame-height": 32,
+    "frame-duration": 0.12,
+
+    "animations": {
+        "walk": {
+            "0": { "start-frame": 0, "end-frame": 3 }
+        }
+    }
+
+}
