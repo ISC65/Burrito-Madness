@@ -11,16 +11,16 @@ EnemyClass :: enum {
 
 // A Renderable holds Rendering Info for the Entity, allowing it to be rendered in a specific way
 Renderable :: struct {
-    indx:           u32,
-    pos:            rl.Vector2,
-    tex:            rl.Texture2D,
+  indx:          u32,
+  pos:            rl.Vector2,
+  tex:            rl.Texture2D,
 
-    isAnimated:     bool, // if the Renderable isnt animated, no need for the next fields
+  isAnimated:     bool, // if the Renderable isnt animated, no need for the next fields
 
-    sourceRec:      rl.Rectangle,
-    frameDuration:  f32,
-    frameTimer:     f32,
-    currFrame:      i32,
+  sourceRec:      rl.Rectangle,
+  frameDuration:  f32,
+  frameTimer:     f32,
+  currFrame:      i32,
 }
 
 Enemy :: struct {
@@ -94,20 +94,10 @@ spawnEntity :: proc(e: Entity, w: ^World) {
 
     switch v in e {
         case Enemy:
-            if v.renderable.indx <= cast(u32)len(w.enemies) - 1 {
-                w.enemies[v.renderable.indx] = v
-            }
-            else {
-                append(&w.enemies, v)
-            }
+            append(&w.enemies, v)
 
         case Bullet:
-            if v.renderable.indx <= cast(u32)len(w.bullets) - 1 {
-                w.bullets[v.renderable.indx] = v
-            }
-            else {
-                append(&w.bullets, v)
-            }
+            append(&w.bullets, v)
     }
 
 
@@ -222,5 +212,3 @@ drawRenderables :: proc(w: ^World) {
       }
     }
 }
-
-
