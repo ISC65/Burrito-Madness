@@ -2,32 +2,38 @@ package engine
 import rl "vendor:raylib"
 import "core:fmt"
 
-EnemyClass :: enum {
+EnemyClass :: enum u8 {
     Tank,
     Ranged,
     Assasin,
     Swarmer
 }
 
-// A Renderable holds Rendering Info for the Entity, allowing it to be rendered in a specific way
+AnimationClip :: struct {
+  firstFrame: u32,
+  finalFrame:  u32
+}
+
+//A Renderable holds Rendering Info for the Entity, allowing it to be rendered in a specific way
 Renderable :: struct {
-  indx:          u32,
+  uniqueID:       f64,
+  indx:           u32,
   pos:            rl.Vector2,
   tex:            rl.Texture2D,
 
-  isAnimated:     bool, // if the Renderable isnt animated, no need for the next fields
+  isAnimated:     b32, // if the Renderable isnt animated, no need for the next fields
 
   sourceRec:      rl.Rectangle,
   frameDuration:  f32,
-  frameTimer:     f32,
-  currFrame:      i32,
+  
+  animationClips: [7]AnimationClip
 }
 
 Enemy :: struct {
     hp:         f32,
     speed:      f32,
 
-    isBoss:     bool,
+    isBoss:     b32,
 
     class:      EnemyClass,
     renderable: Renderable
@@ -71,17 +77,37 @@ despawnAllEntities :: proc(w: ^World) {
     }
 }
 
+isEntityEqual :: proc(a: Entity, b: Entity) -> bool {
+  
+  result: bool
+  switch v in a {
+    case Enemy:
+      compB, ok := b.(Enemy)
+      if ok {
+        result = v.renderable.uniqueID == compB.renderable.uniqueID
+      }
+    
+    case Bullet:
+      compB, ok := b.(Bullet)
+      if ok {
+        result = v.renderable.uniqueID == compB.renderable.uniqueID
+      } 
+  }
+
+  return result
+}
+
 despawnEntity :: proc(e: Entity, w: ^World) {
   switch v in e {
     case Enemy:
-      if w.enemies[v.renderable.indx] == {} {
+      if isEntityEqual(w.enemies[v.renderable.indx], {}) {
         return
       }
       w.enemies[v.renderable.indx] = {}
 
 
     case Bullet:
-      if w.bullets[v.renderable.indx] == {} {
+      if isEntityEqual(w.bullets[v.renderable.indx], {}) {
         return
       }
       w.bullets[v.renderable.indx] = {}
@@ -114,13 +140,16 @@ updateRenderables :: proc(dt: f32, w: ^World) {
         checkX := cast(f32)e.renderable.tex.width / e.renderable.sourceRec.width
         checkY := cast(f32)e.renderable.tex.height / e.renderable.sourceRec.height
 
-        maxFrames : i32 = cast(i32)(checkX + checkY) - 2
+        maxFrames : u32 = cast(u32)(checkX + checkY) - 2
 
-        if !e.renderable.isAnimated || e == {} {
+        frameTimer : f32
+        currFrame : u32
+
+        if !e.renderable.isAnimated || isEntityEqual(e, Enemy{}) {
             continue
         }
         else {
-            e.renderable.frameTimer += dt
+            frameTimer += dt
 
             if checkX == 1 && checkY == 1 { continue }
 
@@ -132,18 +161,18 @@ updateRenderables :: proc(dt: f32, w: ^World) {
             if cast(i32)e.renderable.sourceRec.y > maxY {
                 e.renderable.sourceRec.x = 0
                 e.renderable.sourceRec.y = 0
-                e.renderable.currFrame = 0
+                currFrame = 0
             }
 
 
-            if e.renderable.frameTimer >= e.renderable.frameDuration {
-                e.renderable.frameTimer = 0
-                e.renderable.sourceRec.x += e.renderable.sourceRec.width
-                e.renderable.currFrame += 1
+            if frameTimer >= e.renderable.frameDuration {
+                frameTimer = 0
+                currFrame += 1
+                e.renderable.sourceRec.x = e.renderable.sourceRec.width * cast(f32)currFrame
             }
 
-            if e.renderable.currFrame > maxFrames {
-                e.renderable.currFrame = 0
+            if currFrame > maxFrames {
+                currFrame = 0
             }
         }
     }
@@ -157,13 +186,16 @@ updateRenderables :: proc(dt: f32, w: ^World) {
         checkX := cast(f32)b.renderable.tex.width / b.renderable.sourceRec.width
         checkY := cast(f32)b.renderable.tex.height / b.renderable.sourceRec.height
 
-        maxFrames : i32 = cast(i32)(checkX + checkY) - 2
+        maxFrames : u32 = cast(u32)(checkX + checkY) - 2
 
-        if !b.renderable.isAnimated || b == {} {
+        frameTimer : f32
+        currFrame : u32
+        
+        if !b.renderable.isAnimated || isEntityEqual(b, Bullet{}) {
             continue
         }
         else {
-            b.renderable.frameTimer += dt
+            frameTimer += dt
 
             if checkX == 1 && checkY == 1 { continue }
 
@@ -175,18 +207,18 @@ updateRenderables :: proc(dt: f32, w: ^World) {
             if cast(i32)b.renderable.sourceRec.y > maxY {
                 b.renderable.sourceRec.x = 0
                 b.renderable.sourceRec.y = 0
-                b.renderable.currFrame = 0
+                currFrame = 0
             }
 
 
-            if b.renderable.frameTimer >= b.renderable.frameDuration {
-                b.renderable.frameTimer = 0
-                b.renderable.sourceRec.x += b.renderable.sourceRec.width
-                b.renderable.currFrame += 1
+            if frameTimer >= b.renderable.frameDuration {
+                frameTimer = 0
+                currFrame += 1
+                b.renderable.sourceRec.x = b.renderable.sourceRec.width * cast(f32)currFrame
             }
 
-            if b.renderable.currFrame > maxFrames {
-                b.renderable.currFrame = 0
+            if currFrame > maxFrames {
+                currFrame = 0
             }
         }
     }
