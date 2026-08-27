@@ -21,7 +21,7 @@ defRenderable : en.Renderable = {
 }
 
 
-new_enemy :: proc "c" (L: ^lua.State) -> i32 {
+spawn_enemy :: proc "c" (L: ^lua.State) -> i32 {
   context = runtime.default_context()
   index : u32
   if !lua.isnumber(L, 1) || !lua.isnumber(L, 2) || !lua.isboolean(L, 3) || !lua.isstring(L, 4) || !lua.istable(L, 5) {
@@ -67,7 +67,7 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
   lua.getfield(L, indx, "position")
   if lua.istable(L, -1) {
     lua.getfield(L, -1, "x")
-    if lua.isnumber(L, -1) {
+    if lua.is2313msnumber(L, -1) {
       r.pos.x = f32(lua.tonumber(L, -1))
     }
 
@@ -81,9 +81,6 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
   lua.getfield(L, indx, "texturePath")
   if lua.isstring(L, -1) {
     r.tex = rl.LoadTexture(lua.tostring(L, -1))
-  }
-  else {
-
   }
   lua.pop(L, 1)
 
@@ -123,6 +120,9 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
     }
   }
   lua.pop(L, 5)
+    
+  lua.getfield(L, indx, "animations")
+  if lua.istable(L, -1) {
 
-  uID := rand.float64() * 1e120
+  }
 }
