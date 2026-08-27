@@ -67,7 +67,7 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
   lua.getfield(L, indx, "position")
   if lua.istable(L, -1) {
     lua.getfield(L, -1, "x")
-    if lua.is2313msnumber(L, -1) {
+    if lua.isnumber(L, -1) {
       r.pos.x = f32(lua.tonumber(L, -1))
     }
 
