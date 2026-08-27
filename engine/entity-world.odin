@@ -16,7 +16,6 @@ AnimationClip :: struct {
 
 //A Renderable holds Rendering Info for the Entity, allowing it to be rendered in a specific way
 Renderable :: struct {
-  uniqueID:       f64,
   indx:           u32,
   pos:            rl.Vector2,
   tex:            rl.Texture2D,
@@ -84,13 +83,13 @@ isEntityEqual :: proc(a: Entity, b: Entity) -> bool {
     case Enemy:
       compB, ok := b.(Enemy)
       if ok {
-        result = v.renderable.uniqueID == compB.renderable.uniqueID
+        result = v.renderable.indx == compB.renderable.indx
       }
     
     case Bullet:
       compB, ok := b.(Bullet)
       if ok {
-        result = v.renderable.uniqueID == compB.renderable.uniqueID
+        result = v.renderable.indx == compB.renderable.indx
       } 
   }
 

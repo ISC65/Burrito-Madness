@@ -13,14 +13,7 @@ setup :: proc(world: ^en.World) {
         fmt.println("Spawning")
 
         en.spawnEntity(en.Enemy{hp = 100, speed = 20, class = en.EnemyClass.Tank, renderable = en.Renderable{
-            i,
-            rl.Vector2{cast(f32)rl.GetRandomValue(0, 300), cast(f32)rl.GetRandomValue(0, 300)},
-            rl.LoadTexture("assets/spritesheet Prototype.png"),
-            true,
-            rl.Rectangle{0, 0, 32, 32},
-            0.3,
-            0,
-            0
+            
         }}, world)
     }
 }
@@ -34,14 +27,20 @@ main :: proc() {
 
     setup(&w)
 
+    target := rl.LoadRenderTexture(scrW, scrH)
+
     for !rl.WindowShouldClose() {
         dt := rl.GetFrameTime()
 
         en.updateRenderables(dt, &w)
 
         rl.BeginDrawing()
+        rl.BeginTextureMode(target)
+        
         rl.ClearBackground(rl.BLANK)
         en.drawRenderables(&w)
+        
+        rl.EndTextureMode()
         rl.EndDrawing()
     }
 
