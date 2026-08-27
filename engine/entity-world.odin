@@ -2,7 +2,7 @@ package engine
 import rl "vendor:raylib"
 import "core:fmt"
 
-EnemyClass :: enum u8 {
+EnemyClass :: enum {
     Tank,
     Ranged,
     Assasin,

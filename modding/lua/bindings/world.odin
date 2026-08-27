@@ -2,14 +2,12 @@ package modding
 import lua "vendor:lua/5.4"
 import en "../../../engine"
 import rl "vendor:raylib"
-import "core:math/rand"
 import "core:fmt"
 import "base:runtime"
 
 bind_world :: proc(L: ^lua.State)
 
 defRenderable : en.Renderable = {
-  uniqueID = 2763,
   indx = 200,
   pos = {100, 100},
   tex = rl.LoadTexture("assets/sonity.png"),
