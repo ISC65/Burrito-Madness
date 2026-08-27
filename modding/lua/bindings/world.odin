@@ -1,10 +1,12 @@
 package modding
 import lua "vendor:lua/5.4"
+import "core:reflect"
 import en "../../../engine"
 import rl "vendor:raylib"
 import "core:fmt"
 import "base:runtime"
 
+/*
 bind_world :: proc(L: ^lua.State)
 
 defRenderable : en.Renderable = {
@@ -19,7 +21,7 @@ defRenderable : en.Renderable = {
 }
 
 
-spawn_enemy :: proc "c" (L: ^lua.State) -> i32 {
+new_enemy :: proc "c" (L: ^lua.State) -> i32 {
   context = runtime.default_context()
   index : u32
   if !lua.isnumber(L, 1) || !lua.isnumber(L, 2) || !lua.isboolean(L, 3) || !lua.isstring(L, 4) || !lua.istable(L, 5) {
@@ -32,20 +34,14 @@ spawn_enemy :: proc "c" (L: ^lua.State) -> i32 {
   hp := f32(lua.tonumber(L, 1))
   speed := f32(lua.tonumber(L, 2))
   isBoss := lua.toboolean(L, 3)
-  enemyClass := u8(lua.tointeger(L, 4))
-  
-  switch c in enemyClass {
-    case en.EnemyClass.Tank:
-      enemyClass = en.EnemyClass.Tank
-  
-    case en.EnemyClass.Ranged:
-      enemyClass = en.EnemyClass.Ranged
-    
-    case en.EnemyClass.Assasin:
-      enemyClass = en.EnemyClass.Assasin
-    
-    case en.EnemyClass.Swarmer:
-      enemyClass = en.EnemyClass.Swarmer
+  rawEnemyClass :=  u32(lua.tointeger(L, 4))
+  enemyClass : en.EnemyClass
+
+  if reflect.enum_value_has_name(rawEnemyClass) {
+    enemyClass = en.EnemyClass(rawEnemyClass)
+  } 
+  else {
+    enemyClass = en.EnemyClass.TANK
   }
 
   if lua.istable(L, 5) {
@@ -68,15 +64,17 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
     if lua.isnumber(L, -1) {
       r.pos.x = f32(lua.tonumber(L, -1))
     }
+    lua.pop(L, 1)
 
     lua.getfield(L, -2, "y")
     if lua.isnumber(L, -1) {
       r.pos.y = f32(lua.tonumber(L, -1))
     }
+    lua.pop(L, 1)
   }
-  lua.pop(L, 3)
+  lua.pop(L, 1)
 
-  lua.getfield(L, indx, "texturePath")
+  lua.getfield(L, indx, "spriteSheetPath")
   if lua.isstring(L, -1) {
     r.tex = rl.LoadTexture(lua.tostring(L, -1))
   }
@@ -124,3 +122,4 @@ make_renderable :: proc(L: ^lua.State, r: ^en.Renderable, spawnIndx: u32, indx: 
 
   }
 }
+*/

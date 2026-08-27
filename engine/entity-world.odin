@@ -2,11 +2,11 @@ package engine
 import rl "vendor:raylib"
 import "core:fmt"
 
-EnemyClass :: enum {
-    Tank,
-    Ranged,
-    Assasin,
-    Swarmer
+EnemyClass :: enum u32 {
+    TANK,
+    RANGED,
+    ASSASIN,
+    SWARMER
 }
 
 AnimationClip :: struct {
@@ -99,17 +99,17 @@ isEntityEqual :: proc(a: Entity, b: Entity) -> bool {
 despawnEntity :: proc(e: Entity, w: ^World) {
   switch v in e {
     case Enemy:
-      if isEntityEqual(w.enemies[v.renderable.indx], {}) {
+      if isEntityEqual(w.enemies[v.renderable.indx], Enemy{}) {
         return
       }
-      w.enemies[v.renderable.indx] = {}
+      w.enemies[v.renderable.indx] = Enemy{}
 
 
     case Bullet:
-      if isEntityEqual(w.bullets[v.renderable.indx], {}) {
+      if isEntityEqual(w.bullets[v.renderable.indx], Bullet{}) {
         return
       }
-      w.bullets[v.renderable.indx] = {}
+      w.bullets[v.renderable.indx] = Bullet{}
 
   }
 }
@@ -119,7 +119,9 @@ spawnEntity :: proc(e: Entity, w: ^World) {
 
     switch v in e {
         case Enemy:
+          if v.indx > len(w.enemies) -1 {
             append(&w.enemies, v)
+          }
 
         case Bullet:
             append(&w.bullets, v)
